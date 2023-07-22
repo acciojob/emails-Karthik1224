@@ -3,20 +3,20 @@ package com.driver;
 import java.util.*;
 
 public class Gmail extends Email {
-    PriorityQueue<String> DT = new PriorityQueue<>();
-    PriorityQueue<String> MS = new PriorityQueue<>();
+
     HashSet<String>uniqueEmails = new HashSet<>();
-    int initialInboxCapacity;
-    int trashCapacity;
+    ArrayList<Mail> inbox;
+    ArrayList<Mail> trash;
     int inboxCapacity; //maximum number of mails inbox can store
     //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
     public Gmail(String emailId, int inboxCapacity) {
         super(emailId);
         this.inboxCapacity = inboxCapacity;
-        initialInboxCapacity=0;
-        trashCapacity = 0;
+        inbox = new ArrayList<>();
+        trash = new ArrayList<>();
     }
+
 
     public void receiveMail(Date date, String sender, String message){
         // If the inbox is full, move the oldest mail in the inbox to trash and add the new mail to inbox.
@@ -26,20 +26,15 @@ public class Gmail extends Email {
         if(!uniqueEmails.contains(super.getEmailId()))
         {
 
-            if(initialInboxCapacity == inboxCapacity)
+            if(inbox.size() == inboxCapacity)
             {
-                initialInboxCapacity--;
-                MS.poll();
-                trashCapacity++;
 
+                inbox.remove(0);
+
+                trash.add(new Mail(date,sender,message));
             }
-
+            inbox.add(new Mail(date,sender,message));
             uniqueEmails.add(super.getEmailId());
-            MS.add
-            initialInboxCapacity++;
-
-
-
 
         }
 
@@ -49,18 +44,33 @@ public class Gmail extends Email {
     public void deleteMail(String message){
         // Each message is distinct
         // If the given message is found in any mail in the inbox, move the mail to trash, else do nothing
+        for(Mail mail:inbox)
+        {
+            String msg = mail.getMessage();
+            if(msg.equals(message))
+            {
+                trash.add(mail);
+                inbox.remove(mail);
+            }
+        }
 
     }
 
     public String findLatestMessage(){
         // If the inbox is empty, return null
         // Else, return the message of the latest mail present in the inbox
+        if(inbox.size()==0) return null;
+        Mail m = inbox.get(inbox.size()-1);
+        return m.getMessage();
 
     }
 
     public String findOldestMessage(){
         // If the inbox is empty, return null
         // Else, return the message of the oldest mail present in the inbox
+        if(inbox.size()==0) return null;
+        Mail m = inbox.get(0);
+        return m.getMessage();
 
     }
 
@@ -68,22 +78,31 @@ public class Gmail extends Email {
         //find number of mails in the inbox which are received between given dates
         //It is guaranteed that start date <= end date
 
+        int count = 0;
+        for(Mail mail : inbox)
+        {
+            if (mail.getDate().compareTo(start) >= 0 && mail.getDate().compareTo(end) <= 0) {
+                count++;
+             }
+          }
+        return count;
+
     }
 
     public int getInboxSize(){
         // Return number of mails in inbox
-        return initialInboxCapacity;
+        return inbox.size();
 
     }
 
     public int getTrashSize(){
         // Return number of mails in Trash
-       return trashCapacity;
+       return trash.size();
     }
 
     public void emptyTrash(){
         // clear all mails in the trash
-       trashCapacity = 0;
+       trash.clear();
     }
 
     public int getInboxCapacity() {
@@ -91,20 +110,29 @@ public class Gmail extends Email {
         return inboxCapacity;
     }
 
-    public void helper(Date date, String sender, String message)
-    {
 
-    }
 }
-class pq implements Comparator<Pair>{
+class Mail
+{
+    private Date date;
+    private String sender;
+    private String message;
 
-    // Overriding compare()method of Comparator
-    // for descending order of cgpa
-    public int compare(Pair s1, Pair s2) {
-        if (s1.cgpa < s2.cgpa)
-            return 1;
-        else if (s1.cgpa > s2.cgpa)
-            return -1;
-        return 0;
+    public Mail(Date date, String sender, String message) {
+        this.date = date;
+        this.sender = sender;
+        this.message = message;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
