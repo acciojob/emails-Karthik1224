@@ -1,15 +1,21 @@
 package com.driver;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 public class Gmail extends Email {
-
+    PriorityQueue<String> DT = new PriorityQueue<>();
+    PriorityQueue<String> MS = new PriorityQueue<>();
+    HashSet<String>uniqueEmails = new HashSet<>();
+    int initialInboxCapacity;
+    int trashCapacity;
     int inboxCapacity; //maximum number of mails inbox can store
     //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
     public Gmail(String emailId, int inboxCapacity) {
-
+        super(emailId);
+        this.inboxCapacity = inboxCapacity;
+        initialInboxCapacity=0;
+        trashCapacity = 0;
     }
 
     public void receiveMail(Date date, String sender, String message){
@@ -17,6 +23,26 @@ public class Gmail extends Email {
         // It is guaranteed that:
         // 1. Each mail in the inbox is distinct.
         // 2. The mails are received in non-decreasing order. This means that the date of a new mail is greater than equal to the dates of mails received already.
+        if(!uniqueEmails.contains(super.getEmailId()))
+        {
+
+            if(initialInboxCapacity == inboxCapacity)
+            {
+                initialInboxCapacity--;
+                MS.poll();
+                trashCapacity++;
+
+            }
+
+            uniqueEmails.add(super.getEmailId());
+            MS.add
+            initialInboxCapacity++;
+
+
+
+
+        }
+
 
     }
 
@@ -46,20 +72,39 @@ public class Gmail extends Email {
 
     public int getInboxSize(){
         // Return number of mails in inbox
+        return initialInboxCapacity;
 
     }
 
     public int getTrashSize(){
         // Return number of mails in Trash
-
+       return trashCapacity;
     }
 
     public void emptyTrash(){
         // clear all mails in the trash
-
+       trashCapacity = 0;
     }
 
     public int getInboxCapacity() {
         // Return the maximum number of mails that can be stored in the inbox
+        return inboxCapacity;
+    }
+
+    public void helper(Date date, String sender, String message)
+    {
+
+    }
+}
+class pq implements Comparator<Pair>{
+
+    // Overriding compare()method of Comparator
+    // for descending order of cgpa
+    public int compare(Pair s1, Pair s2) {
+        if (s1.cgpa < s2.cgpa)
+            return 1;
+        else if (s1.cgpa > s2.cgpa)
+            return -1;
+        return 0;
     }
 }
